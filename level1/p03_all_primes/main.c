@@ -30,6 +30,6 @@ int main(void) {
     }
     mingw_gettimeofday(&end,NULL);
     double m=0.000001*(end.tv_usec-start.tv_usec)+end.tv_sec-start.tv_sec;
-    printf("”√ ±%f√Î\n",m);
+    printf("Time used:%fs\n",m);
     return 0;
 }
