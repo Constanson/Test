@@ -5,7 +5,7 @@
 int main(void) {
     struct timeval start, end;
     mingw_gettimeofday(&start,NULL);
-    printf("2\n");
+    printf("2 ");
     int flag=0;
     for(int a=3;a<1001;a=a+2){
         flag=0;
@@ -21,7 +21,7 @@ int main(void) {
 
 
         if (flag==0) {
-            printf("%d\n",a);
+            printf("%d ",a);
 
         }
 
