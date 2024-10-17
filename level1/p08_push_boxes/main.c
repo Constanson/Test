@@ -7,12 +7,12 @@ char maze[20][21]={
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
+{'#',' ',' ',' ','@',' ',' ',' ',' ','@',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
-{'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
-{'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
+{'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ','B',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
 {'#',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','#','\n'},
@@ -26,50 +26,86 @@ char maze[20][21]={
 char dir = 0;
 int row=19, col=7;
 void direction(void) {
-    printf("Enter the direction: ");
+    printf("Enter the direction: \n");
     scanf("\n%c", &dir);
     switch (dir) {
         case 'w': {
-            if(maze[row-1][col]==' ') {printf("good\n");
+            if(maze[row-1][col]==' '||maze[row-1][col]=='@') {
                 maze[row-1][col]='P';
                 maze[row][col]=' ';
                 row--;
             }
             else if (maze[row-1][col]=='B') {
-
+                if(maze[row-2][col]==' '||maze[row-2][col]=='@') {
+                    maze[row-2][col]='B';
+                    maze[row][col]=' ';
+                    maze[row-1][col]='P';
+                    row--;
+                }
             }
-            else {printf("sad\n");}
             break;
         }
         case 's': {
-            if(maze[row+1][col]==' ') {printf("good\n");
+            if(maze[row+1][col]==' '||maze[row+1][col]=='@') {
                 maze[row+1][col]='P';
                 maze[row][col]=' ';
-                row++;
+                row++;}
+            else if(maze[row+1][col]=='B')  {
+                if (maze[row+2][col]==' '||maze[row+2][col]=='@') {
+                    maze[row+2][col]='B';
+                    maze[row][col]=' ';
+                    maze[row+1][col]='P';
+                    row++;
+
+                }
             } break;
         }
         case 'a': {
-            if(maze[row][col-1]==' ') {printf("good\n");
+            if(maze[row][col-1]==' '||maze[row][col-1]=='@') {
                 maze[row][col-1]='P';
                 maze[row][col]=' ';
                 col--;
-            }break;
-        }
-        case 'd': {
-            if(maze[row][col+1]==' ') {printf("good\n");
+            }
+            else if(maze[row][col-1]=='B') {
+                if (maze[row][col-2]==' '||maze[row][col-2]=='@') {
+                    maze[row][col-2]='B';
+                    maze[row][col]=' ';
+                    maze[row][col-1]='P';
+                    col--;
+                }
+
+                }break;
+            }
+            case 'd': {
+            if(maze[row][col+1]==' '||maze[row][col+1]=='@') {
                 maze[row][col+1]='P';
                 maze[row][col]=' ';
                 col++;
-            } break;
+            }else if(maze[row][col+1]=='B')  {
+                if (maze[row][col+2]==' '||maze[row][col+2]=='@') {
+                    maze[row][col+2]='B';
+                    maze[row][col]=' ';
+                    maze[row][col+1]='P';
+                    col++;
+                } break;
+            }
         }
-    } printf(maze);
-}
-
+            }
+        }
 
 int main() {
     printf(maze);
-    while (1) {direction();
-        if (maze[0][7] == 'P') {
+    while (1) {
+        if(row==6&&col==4){
+            direction();maze[6][4]='@';
+            printf(maze);
+            }
+        if(row==6&&col==9){
+            direction();maze[6][9]='@';
+            printf(maze);
+        }
+        else {direction();printf(maze);}
+        if (maze[6][4]=='B' &&maze[6][9]=='B' ) {
             printf("Win!\n");
             system("pause");
 return 0;
