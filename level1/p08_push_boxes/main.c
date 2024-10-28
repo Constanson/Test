@@ -26,7 +26,7 @@ char maze[20][21]={
 char dir = 0;
 int row=19, col=7;
 void direction(void) {
-    printf("Enter the direction: \n");
+    printf("Enter the direction:(wasd) \n");
     scanf("\n%c", &dir);
     switch (dir) {
         case 'w': {
@@ -110,8 +110,5 @@ int main() {
             system("pause");
 return 0;
         }
-
-
-
     }
 }
