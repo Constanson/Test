@@ -1,0 +1,1446 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<time.h>
+#define M 19
+struct dengji
+{
+	int computer[M][M][4];
+	int player[M][M][4];
+}jilu,jilu1,jilu2;
+struct yuce
+{
+	char acom[M][M];
+	char apla[M][M];
+}ce;
+void jiemian(char *h,char *l)
+{
+	int i;
+	printf("\t\t\t 五子棋\n\t\t\t落子无悔!\n");
+	printf("\t");
+	for(i=0;i<M;i++)
+		printf(" %c",*(h+i));
+	printf("\n");
+	for(i=0;i<M;i++)
+		printf("\t%c\n",*(l+i));
+}
+void shuchu(char *h,char *l,char *a)
+{
+	int i,j;
+	printf("\t\t\t 五子棋\n\t\t\t落子无悔!\n");
+	printf("\t");
+	for(i=0;i<M;i++)
+		printf(" %c",*(h+i));
+	printf("\n");
+	for(i=0;i<M;i++)
+	{
+		printf("\t%c",*(l+i));
+		for(j=0;j<M;j++)
+		{
+			if(*(a+i*M+j)=='X'||*(a+i*M+j)=='O')
+				printf("%c ",*(a+i*M+j));
+			else
+			    printf("  ");
+		}
+		printf("\n");
+	}
+}
+void shuru(char *h,char *l,char *a)
+{
+	int x,y;
+	char chx,chy,chz;
+	chx='z';
+	while(chx<'a'||chx>'s'||chy<'a'||chy>'s')
+	{
+		printf("\t现在该黑方(X)下,请输入横纵坐标:");
+	    chx=getchar();
+		while(chx=='\n'||chx==' ')
+			chx=getchar();
+	    chy=getchar();
+		while(chy=='\n'||chy==' ')
+			chy=getchar();
+	    chz=getchar();
+		if(chx<'a'||chx>'s'||chy<'a'||chy>'s')
+			printf("\t\t错误：超出坐标范围!\n");
+	    else
+		{
+			x=chx-'a';
+	        y=chy-'a';
+	        if(*(a+y*M+x)=='0')
+	               *(a+y*M+x)='X';
+		    else
+			{
+			     printf("\t\t错误：此处已经有棋子!\n");
+			     chx='z';
+			}
+		}
+	}
+}
+void luozi(char *a)
+{
+	int i,j,k,t1=0,t2=0,x1=0,y1=0,x2=0,y2=0;
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			for(k=0;k<4;k++)
+			{
+				if(t1<jilu.player[i][j][k])
+				{
+					t1=jilu.player[i][j][k];
+				    x1=i;y1=j;
+				}
+			}
+		}
+	}
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			for(k=0;k<4;k++)
+			{
+				if(t2<jilu.computer[i][j][k])
+				{
+					t2=jilu.computer[i][j][k];
+				    x2=i;y2=j;
+				}
+			}
+		}
+	}
+	if(t1>t2)
+		*(a+x1*M+y1)='O';
+	else
+		*(a+x2*M+y2)='O';
+}
+void ping1(int x,int y,int xx,int yy)
+{
+	int xxx=1;
+	int i,j,k,score=0,t=0,t1=0,t2=0,x1=0,y1=0,x2=0,y2=0;
+	for(i=0;i<M;i++)
+		for(j=0;j<M;j++)
+			for(k=0;k<4;k++)
+			{
+				jilu2.computer[i][j][k]=0;
+				jilu2.player[i][j][k]=0;
+			}
+	//作为用户防守
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			if('0'==ce.acom[i][j])
+			{
+				t=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i][j]=='O')
+						score=score+1;
+					else if(ce.apla[i][j-k]=='X'||j-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i][j+k]=='O')
+						score=score+1;
+					else if(ce.apla[i][j+k]=='X'||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				      jilu.computer[x][y][0]=jilu.computer[x][y][0]+score;
+					  jilu2.computer[i][j][0]=score;
+						  //横向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i-k][j-k]=='O')
+						score=score+1;
+					else if(ce.apla[i-k][j-k]=='X'||j-k<0||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i+k][j+k]=='O')
+						score=score+1;
+					else if(ce.apla[i+k][j+k]=='X'||j+k>M||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[x][y][1]=jilu.computer[x][y][1]+score;
+				jilu2.computer[i][j][1]=score;
+				//斜向下45度
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i-k][j]=='O')
+						score=score+1;
+					else if(ce.apla[i-k][j]=='X'||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i+k][j]=='O')
+						score=score+1;
+					else if(ce.apla[i+k][j]=='X'||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[x][y][2]=jilu.computer[x][y][2]+score;
+				jilu2.computer[i][j][2]=score;
+				//竖向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i-k][j+k]=='O')
+						score=score+1;
+					else if(ce.apla[i-k][j+k]=='X'||i-k<0||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i+k][j-k]=='O')
+						score=score+1;
+					else if(ce.apla[i+k][j-k]=='X'||j-k<0||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[x][y][3]=jilu.computer[x][y][3]+score;
+				jilu2.computer[i][j][3]=score;
+				//斜向下135度
+				}
+				t=0;
+				score=0;
+			}
+		}
+	}
+	//防守
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			if('0'==ce.apla[i][j])
+			{
+				t=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i][j-k]=='X')
+						score=score+1;
+					else if(ce.apla[i][j-k]=='O'||j-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i][j+k]=='X')
+						score=score+1;
+					else if(ce.apla[i][j+k]=='O'||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][0]=jilu.player[x][y][0]+score;
+				jilu2.player[i][j][0]=score;
+				//横向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i-k][j-k]=='X')
+						score=score+1;
+					else if(ce.apla[i-k][j-k]=='O'||j-k<0||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i+k][j+k]=='X')
+						score=score+1;
+					else if(ce.apla[i+k][j+k]=='O'||j+k>M||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][1]=jilu.player[x][y][1]+score;
+				jilu2.player[i][j][1]=score;
+				//斜向下45度
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i-k][j]=='X')
+						score=score+1;
+					else if(ce.apla[i-k][j]=='O'||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i+k][j]=='X')
+						score=score+1;
+					else if(ce.apla[i+k][j]=='O'||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][2]=jilu.player[x][y][2]+score;
+				jilu2.player[i][j][2]=score;
+				//竖向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.apla[i-k][j+k]=='X')
+						score=score+1;
+					else if(ce.apla[i-k][j+k]=='O'||i-k<0||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.apla[i+k][j-k]=='X')
+						score=score+1;
+					else if(ce.apla[i+k][j-k]=='O'||j-k<0||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][3]=jilu.player[x][y][3]+score;
+				jilu2.player[x][y][3]=score;
+				//斜向下135度
+				}
+				t=0;
+				score=0;
+			}
+		}
+	}
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			for(k=0;k<4;k++)
+			{
+				if(jilu2.computer[i][j][k]>=4)
+				{
+					jilu.computer[x][y][k]=jilu.computer[x][y][k]+50;
+					xxx=0;
+					break;
+				}
+				if(jilu2.player[i][j][k]>=4)
+				{
+					jilu.player[x][y][k]=jilu.player[x][y][k]+60;
+				}
+			}
+			if(xxx=0)
+				break;
+		}
+		if(xxx==0)
+			break;
+	}
+}
+void ping(int x,int y)
+{
+	int xxx=1;
+	int i,j,k,score=0,t=0,t1=0,t2=0,x1=0,y1=0,x2=0,y2=0;
+	int x3;int y3;
+	//初始化
+	for(i=0;i<M;i++)
+		for(j=0;j<M;j++)
+		{
+			ce.acom[i][j]=ce.apla[i][j];
+			for(k=0;k<4;k++)
+			{
+				jilu1.computer[i][j][k]=0;
+				jilu1.player[i][j][k]=0;
+			}
+		}
+	//作为用户防守
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			if('0'==ce.acom[i][j])
+			{
+				t=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i][j]=='X')
+						score=score+1;
+					else if(ce.acom[i][j-k]=='O'||j-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i][j+k]=='X')
+						score=score+1;
+					else if(ce.acom[i][j+k]=='O'||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				      jilu.computer[x][y][0]=jilu.computer[x][y][0]+score;
+					  jilu1.computer[i][j][0]=score;
+						  //横向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i-k][j-k]=='X')
+						score=score+1;
+					else if(ce.acom[i-k][j-k]=='O'||j-k<0||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i+k][j+k]=='X')
+						score=score+1;
+					else if(ce.acom[i+k][j+k]=='O'||j+k>M||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[x][y][1]=jilu.computer[x][y][1]+score;
+				jilu1.computer[i][j][1]=score;
+				//斜向下45度
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i-k][j]=='X')
+						score=score+1;
+					else if(ce.acom[i-k][j]=='O'||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i+k][j]=='X')
+						score=score+1;
+					else if(ce.acom[i+k][j]=='O'||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[x][y][2]=jilu.computer[x][y][2]+score;
+				jilu1.computer[i][j][2]=score;
+				//竖向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i-k][j+k]=='X')
+						score=score+1;
+					else if(ce.acom[i-k][j+k]=='O'||i-k<0||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i+k][j-k]=='X')
+						score=score+1;
+					else if(ce.acom[i+k][j-k]=='O'||j-k<0||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[x][y][3]=jilu.computer[x][y][3]+score;
+				jilu1.computer[i][j][3]=score;
+				//斜向下135度
+				}
+				t=0;
+				score=0;
+			}
+		}
+	}
+	//防守
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			if('0'==ce.acom[i][j])
+			{
+				t=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i][j-k]=='O')
+						score=score+1;
+					else if(ce.acom[i][j-k]=='X'||j-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i][j+k]=='O')
+						score=score+1;
+					else if(ce.acom[i][j+k]=='X'||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][0]=jilu.player[x][y][0]+score;
+				jilu1.player[i][j][0]=score;
+				//横向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i-k][j-k]=='O')
+						score=score+1;
+					else if(ce.acom[i-k][j-k]=='X'||j-k<0||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i+k][j+k]=='O')
+						score=score+1;
+					else if(ce.acom[i+k][j+k]=='X'||j+k>M||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][1]=jilu.player[x][y][1]+score;
+				jilu1.player[i][j][1]=score;
+				//斜向下45度
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i-k][j]=='O')
+						score=score+1;
+					else if(ce.acom[i-k][j]=='X'||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i+k][j]=='O')
+						score=score+1;
+					else if(ce.acom[i+k][j]=='X'||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][2]=jilu.player[x][y][2]+score;
+				jilu1.player[i][j][2]=score;
+				//竖向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(ce.acom[i-k][j+k]=='O')
+						score=score+1;
+					else if(ce.acom[i-k][j+k]=='X'||i-k<0||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(ce.acom[i+k][j-k]=='O')
+						score=score+1;
+					else if(ce.acom[i+k][j-k]=='X'||j-k<0||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[x][y][3]=jilu.player[x][y][3]+score;
+				jilu1.player[x][y][3]=score;
+				//斜向下135度
+				}
+				t=0;
+				score=0;
+			}
+		}
+	}
+       for(x3=0;x3<M;x3++)
+	   {
+		   for(y3=0;y3<M;y3++)
+		   {
+			   for(k=0;k<4;k++)
+			  {
+				   if(jilu1.computer[x3][y3][k]>=4)
+				   {
+					   jilu.computer[x3][y3][k]=jilu.computer[x3][y3][k]+70;
+					   xxx=0;
+					   break;
+				   }
+				   if(jilu1.player[x3][y3][k]>=4)
+				   {
+					   jilu.player[x3][y3][k]=jilu.player[x3][y3][k]+80;
+					   xxx=0;
+					   break;
+				   }
+				   if(jilu1.computer[x3][y3][k]>=3||jilu1.player[x3][y3][k]>=3)
+			        ce.apla[x3][y3]='X';
+			        ping1(x,y,x3,y3);
+			        ce.apla[x3][y3]='0';
+			  }
+			   if(xxx==0)
+				   break;
+		   }
+		   if(xxx==0)
+			   break;
+	   }
+}
+void score(char *a)
+{
+	int x,y;
+	int xxx=1;
+	int i,j,k,score=0,t=0,t1=0,t2=0,x1=0,y1=0,x2=0,y2=0;
+	//初始化
+	for(i=0;i<M;i++)
+		for(j=0;j<M;j++)
+		{
+			ce.acom[i][j]=*(a+i*M+j);
+			for(k=0;k<4;k++)
+			{
+				jilu.computer[i][j][k]=0;
+				jilu.player[i][j][k]=0;
+			}
+		}
+	//进攻
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			if('0'==*(a+i*M+j))
+			{
+				t=0;
+				for(k=1;;k++)
+				{
+					if(*(a+i*M+j-k)=='O')
+						score=score+1;
+					else if(*(a+i*M+j-k)=='X'||j-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+i*M+j+k)=='O')
+						score=score+1;
+					else if(*(a+i*M+j+k)=='X'||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[i][j][0]=score;//横向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(*(a+(i-k)*M+j-k)=='O')
+						score=score+1;
+					else if(*(a+(i-k)*M+j-k)=='X'||j-k<0||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+(i+k)*M+j+k)=='O')
+						score=score+1;
+					else if(*(a+(i+k)*M+j+k)=='X'||j+k>M||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[i][j][1]=score;//斜向下45度
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(*(a+(i-k)*M+j)=='O')
+						score=score+1;
+					else if(*(a+(i-k)*M+j)=='X'||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+(i+k)*M+j)=='O')
+						score=score+1;
+					else if(*(a+(i+k)*M+j)=='X'||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[i][j][2]=score;//竖向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(*(a+(i-k)*M+j+k)=='O')
+						score=score+1;
+					else if(*(a+(i-k)*M+j+k)=='X'||i-k<0||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+(i+k)*M+j-k)=='O')
+						score=score+1;
+					else if(*(a+i+k*M+j-k)=='X'||j-k<0||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.computer[i][j][3]=score;//斜向下135度
+				}
+				t=0;
+				score=0;
+			}
+		}
+	}
+	//防守
+	for(i=0;i<M;i++)
+	{
+		for(j=0;j<M;j++)
+		{
+			if('0'==*(a+i*M+j))
+			{
+				t=0;
+				for(k=1;;k++)
+				{
+					if(*(a+i*M+j-k)=='X')
+						score=score+1;
+					else if(*(a+i*M+j-k)=='O'||j-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+i*M+j+k)=='X')
+						score=score+1;
+					else if(*(a+i*M+j+k)=='O'||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[i][j][0]=score;//横向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(*(a+(i-k)*M+j-k)=='X')
+						score=score+1;
+					else if(*(a+(i-k)*M+j-k)=='O'||j-k<0||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+(i+k)*M+j+k)=='X')
+						score=score+1;
+					else if(*(a+(i+k)*M+j+k)=='O'||j+k>M||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[i][j][1]=score;//斜向下45度
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(*(a+(i-k)*M+j)=='X')
+						score=score+1;
+					else if(*(a+(i-k)*M+j)=='O'||i-k<0)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+(i+k)*M+j)=='X')
+						score=score+1;
+					else if(*(a+(i+k)*M+j)=='O'||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[i][j][2]=score;//竖向
+				}
+				t=0;
+				score=0;
+				for(k=1;;k++)
+				{
+					if(*(a+(i-k)*M+j+k)=='X')
+						score=score+1;
+					else if(*(a+(i-k)*M+j+k)=='O'||i-k<0||j+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(*(a+(i+k)*M+j-k)=='X')
+						score=score+1;
+					else if(*(a+(i+k)*M+j-k)=='O'||j-k<0||i+k>M)
+					{
+						t=t+1;
+						break;
+					}
+					else
+						break;
+				}
+				if(t<2||score==4)
+				{
+				jilu.player[i][j][3]=score;//斜向下135度
+				}
+				t=0;
+				score=0;
+			}
+		}
+	}
+	for(x=0;x<M;x++)
+	{
+		for(y=0;y<M;y++)
+		{
+			for(k=0;k<4;k++)
+			{
+				if(jilu.computer[x][y][k]>=4)
+				{
+					jilu.computer[x][y][k]=90;
+					xxx=0;
+					break;
+				}
+				if(jilu.player[x][y][k]>=4)
+				{
+					jilu.player[x][y][k]=100;
+					xxx=0;
+					break;
+				}
+				if(jilu.computer[x][y][k]>=3||jilu.player[x][y][k]>=3)
+				{
+			               ce.acom[x][y]='O';
+			               ping(x,y);
+			               ce.acom[x][y]='0';
+				}
+			}
+			if (xxx==0)
+				break;
+		}
+		if (xxx==0)
+			break;
+	}
+    luozi(&*a);
+}
+int win(char *a)
+{
+	int i,j,k,score;
+	//玩家
+	for(i=0;i<M;i++)
+	{
+		score=1;
+		for(j=0;j<M;j++)
+		{
+			score=1;
+			if('X'==*(a+i*M+j))
+			{
+				for(k=1;;k++)
+				{
+					if(j-k<0)
+						break;
+					if('X'==*(a+i*M+j-k))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(j+k==M)
+						break;
+					if('X'==*(a+i*M+j+k))
+						score=score+1;
+					else
+						break;
+				}//横向
+				if(score>=5)
+				{
+					printf("\t\t\t\t你赢了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+				for(k=1;;k++)
+				{
+					if(j-k<0||i-k<0)
+						break;
+					if('X'==*(a+(i-k)*M+j-k))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(j+k==M||i+k==M)
+						break;
+					if('X'==*(a+(i+k)*M+j+k))
+						score=score+1;
+					else
+						break;
+				}//斜向下45度
+				if(score>=5)
+				{
+					printf("\t\t\t\t你赢了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+				for(k=1;;k++)
+				{
+					if(i-k<0)
+						break;
+					if('X'==*(a+(i-k)*M+j))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(i+k==M)
+						break;
+					if('X'==*(a+(i+k)*M+j))
+						score=score+1;
+					else
+						break;
+				}//竖向
+				if(score>=5)
+				{
+					printf("\t\t\t\t你赢了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+				for(k=1;;k++)
+				{
+					if(j+k==M||i-k<0)
+						break;
+					if('X'==*(a+(i-k)*M+j+k))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(j-k<0||i+k==M)
+						break;
+					if('X'==*(a+(i+k)*M+j-k))
+						score=score+1;
+					else
+						break;
+				}//斜向下135度
+				if(score>=5)
+				{
+					printf("\t\t\t\t你赢了!\n");
+					return 1;
+					break;
+				}
+			}
+		}
+	}
+	//电脑
+	score=1;
+	for(i=0;i<M;i++)
+	{
+		score=1;
+		for(j=0;j<M;j++)
+		{
+			score=1;
+			if('O'==*(a+i*M+j))
+			{
+				for(k=1;;k++)
+				{
+					if(j-k<0)
+						break;
+					if('O'==*(a+i*M+j-k))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(j+k==M)
+						break;
+					if('O'==*(a+i*M+j+k))
+						score=score+1;
+					else
+						break;
+				}//横向
+				if(score>=5)
+				{
+					printf("\t\t\t\t你输了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+				for(k=1;;k++)
+				{
+					if(j-k<0||i-k<0)
+						break;
+					if('O'==*(a+(i-k)*M+j-k))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(j+k==M||i+k==M)
+						break;
+					if('O'==*(a+(i+k)*M+j+k))
+						score=score+1;
+					else
+						break;
+				}//斜向下45度
+				if(score>=5)
+				{
+					printf("\t\t\t\t你输了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+				for(k=1;;k++)
+				{
+					if(i-k<0)
+						break;
+					if('O'==*(a+(i-k)*M+j))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(i+k==M)
+						break;
+					if('O'==*(a+(i+k)*M+j))
+						score=score+1;
+					else
+						break;
+				}//竖向
+				if(score>=5)
+				{
+					printf("\t\t\t\t你输了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+				for(k=1;;k++)
+				{
+					if(j+k==M||i-k<0)
+						break;
+					if('O'==*(a+(i-k)*M+j+k))
+						score=score+1;
+					else
+						break;
+				}
+				for(k=1;;k++)
+				{
+					if(j-k<0||i+k==M)
+						break;
+					if('O'==*(a+(i+k)*M+j-k))
+						score=score+1;
+					else
+						break;
+				}//斜向下135度
+				if(score>=5)
+				{
+					printf("\t\t\t\t你输了!\n");
+					return 1;
+					break;
+				}
+				score=1;
+			}
+		}
+	}
+}
+void welcome()
+{
+	time_t now;
+	printf("请输入任意键开始游戏!");
+	now = time (NULL);
+    printf("\n\n\t\t\t\t\t\t%s",ctime(&now));
+	getch();
+}
+void secai()                  //                颜色设置函数
+{
+	int yanse;
+	time_t now;
+	char flag;
+	system("cls");
+	printf("\n\n");
+	printf("\t\t\t\t系统颜色设置\n\n");
+	printf("\t\t.................  1 ...... 紫底白字 ....................\n\n");
+	printf("\t\t.................  2 ...... 绿底白字 ....................\n\n");
+	printf("\t\t.................  3 ...... 青底白字 ....................\n\n");
+	printf("\t\t.................  4 ...... 红底白字 ....................\n\n");
+	printf("\t\t.................  5 ...... 白底红字 ....................\n\n");
+	printf("\t\t.................  6 ...... 系统默认 ....................\n\n");
+	printf("\t\t.................  7 ...... 颜色配置 ....................\n\n");
+	printf("\t请输入您喜欢的颜色......");
+	scanf("%d",&yanse);
+	switch(yanse)
+	{
+	case 1:
+		system("color 57");
+		break;
+	case 2:
+		system("color 27");
+		break;
+	case 3:
+		system("color 37");
+		break;
+	case 4:
+		system("color 47");
+		break;
+	case 5:
+		system("color fc");
+		break;
+	case 6:
+		system("color 1B");
+		break;
+	case 7:
+		system("cls");
+		system("color 100");
+		break;
+	default:
+		printf("\n\t非法操作,请重新选择");
+		getch();
+		getchar();
+		secai();
+		break;
+	}
+	if(yanse==1||yanse==2||yanse==3||yanse==4||yanse==5||yanse==6||yanse==7)
+	{
+    	printf("\n\t对于您选择的颜色您满意吗?<y/n>");
+		scanf(" %c",&flag);
+		if(flag=='Y'||flag=='y')
+		{
+			printf("\n\t操作成功!\t任意键开始!");
+			now = time (NULL);
+            printf("\n\t\t\t\t\t\t%s ",ctime(&now));
+			getch();
+		}
+		else
+		{
+			printf("\n\t请按任意键重新选择您喜欢的颜色!!");
+			getch();
+			secai();
+		}
+	}
+}
+void main()
+{
+	char hang[M],lie[M],a[M][M];
+	int i,j,z,x;char ch='a';
+	char y;char y1;
+	time_t now;
+	system("color 1B");
+	welcome();
+	system("cls");
+	secai();
+	y1=getchar();
+	x=1;
+	while(x==1)
+	{
+		  system("cls");
+	      for(i=0;i<M;i++)
+		      for(j=0;j<M;j++)
+			       a[i][j]='0';
+		  ch='a';
+	      for(i=0;i<M;i++)
+		  {
+		      hang[i]=ch;
+		      lie[i]=ch;
+		      ch++;
+		  }
+	      jiemian(hang,lie);
+	      while(1)
+		  {
+	          shuru(hang,lie,&a[0][0]);
+		      system("cls");
+		      shuchu(hang,lie,&a[0][0]);
+		      z=win(&a[0][0]);
+		      if(z==1)
+			  {
+			        printf("请输入任意键继续!");
+			        now = time (NULL);
+                    printf("\t\t\t%s",ctime(&now));
+			        getch();
+			        break;
+			  }
+		      system("cls");
+		      score(&a[0][0]);
+		      shuchu(hang,lie,&a[0][0]);
+		      z=win(&a[0][0]);
+		      if(z==1)
+			  {
+			      printf("请输入任意键继续!");
+			      now = time (NULL);
+                  printf("\t\t\t%s",ctime(&now));
+			      getch();
+			      break;
+			  }
+		  }
+		  system("cls");
+		  printf("\n\n\n\n\t想要继续吗？\n\n\n");
+		  while(1)
+		  {
+		      printf("\t\t.........1..........继续\n");
+		      printf("\t\t.........2..........退出\n");
+		      printf("\n\n请选择：");
+		      y=getchar();
+			  y1=getchar();
+			  if(y=='2')
+			  {
+				  x=0;
+				  break;
+			  }
+			  if(y=='1')
+			  {
+				  x=1;
+				  break;
+			  }
+			  printf("\t\t\t错误：没有这个选项!\t请重新输入:\n\n\n");
+		  }
+	}
+	system("cls");
+	printf("\n\n\n请输入任意键结束");
+	now = time (NULL);
+    printf("\n\n\n\n\t\t\t\t\t\t%s",ctime(&now));
+	getch();
+}
